@@ -7,6 +7,7 @@ const sequelizeOptions = {
   dialect: "postgres",
   protocol: "postgres",
   logging: false,
+  native: false,
 };
 
 // Añadir SSL solo en producción
