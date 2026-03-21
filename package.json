@@ -3,11 +3,13 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {
+   "scripts": {
     "dev": "node --watch --env-file=.env ./src/index.js",
     "start": "node ./src/index.js",
-    "migrate": "node --env-file=.env ./src/utils/runMigrations.js",
-    "seed": "node --env-file=.env ./src/utils/runSeeders.js"
+    "migrate": "node ./src/utils/runMigrations.js",
+    "seed": "node ./src/utils/runSeeders.js",
+    "migrate:local": "node --env-file=.env ./src/utils/runMigrations.js",
+    "seed:local": "node --env-file=.env ./src/utils/runSeeders.js"
   },
   "keywords": [],
   "author": "",
