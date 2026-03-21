@@ -3,10 +3,19 @@ dns.setDefaultResultOrder("ipv4first");
 
 import app from "./app.js";
 import { sequelize } from "./config/db.js";
+import { migrator, seeder } from "./config/umzugConfig.js";
 import { NODE_ENV, PORT } from "./config/env.js";
 import "./models/relations.model.js";
 import { setupScheduledTasks } from "./utils/scheduler.js";
 import { logger } from "./observability/logger.js";
+
+const RUN_MIGRATIONS_ON_START =
+  String(process.env.RUN_MIGRATIONS_ON_START || "false").toLowerCase() ===
+  "true";
+const RUN_SEED_ON_START =
+  String(process.env.RUN_SEED_ON_START || "false").toLowerCase() === "true";
+const SEED_BLOCK_STARTUP =
+  String(process.env.SEED_BLOCK_STARTUP || "false").toLowerCase() === "true";
 
 process.on("unhandledRejection", (reason) => {
   logger.error("process_unhandled_rejection", { reason });
@@ -25,6 +34,31 @@ async function main() {
   try {
     await sequelize.authenticate();
     logger.info("database_connection_successful");
+
+    // If seed-on-start is enabled, migrations must run first to guarantee schema.
+    const shouldRunMigrations = RUN_MIGRATIONS_ON_START || RUN_SEED_ON_START;
+
+    if (shouldRunMigrations) {
+      logger.info("startup_migrations_enabled");
+      await migrator.up();
+      logger.info("startup_migrations_completed");
+    }
+
+    if (RUN_SEED_ON_START) {
+      logger.info("startup_seed_enabled", {
+        blocking: SEED_BLOCK_STARTUP,
+      });
+
+      try {
+        await seeder.up();
+        logger.info("startup_seed_completed");
+      } catch (error) {
+        logger.error("startup_seed_failed", { error });
+        if (SEED_BLOCK_STARTUP) {
+          throw error;
+        }
+      }
+    }
 
     if (NODE_ENV !== "test") {
       setupScheduledTasks();
