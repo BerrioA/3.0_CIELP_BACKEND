@@ -9,13 +9,7 @@ import "./models/relations.model.js";
 import { setupScheduledTasks } from "./utils/scheduler.js";
 import { logger } from "./observability/logger.js";
 
-const RUN_MIGRATIONS_ON_START =
-  String(process.env.RUN_MIGRATIONS_ON_START || "false").toLowerCase() ===
-  "true";
-const RUN_SEED_ON_START =
-  String(process.env.RUN_SEED_ON_START || "false").toLowerCase() === "true";
-const SEED_BLOCK_STARTUP =
-  String(process.env.SEED_BLOCK_STARTUP || "false").toLowerCase() === "true";
+
 
 process.on("unhandledRejection", (reason) => {
   logger.error("process_unhandled_rejection", { reason });
@@ -35,6 +29,9 @@ async function main() {
     await sequelize.authenticate();
     logger.info("database_connection_successful");
 
+
+    await migrator.up();
+    
     // If seed-on-start is enabled, migrations must run first to guarantee schema.
     const shouldRunMigrations = RUN_MIGRATIONS_ON_START || RUN_SEED_ON_START;
 
