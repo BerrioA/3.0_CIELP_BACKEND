@@ -1,3 +1,6 @@
+import dns from "dns";
+dns.setDefaultResultOrder("ipv4first");
+
 import app from "./app.js";
 import { sequelize } from "./config/db.js";
 import { NODE_ENV, PORT } from "./config/env.js";
