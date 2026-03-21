@@ -9,8 +9,6 @@ import "./models/relations.model.js";
 import { setupScheduledTasks } from "./utils/scheduler.js";
 import { logger } from "./observability/logger.js";
 
-
-
 process.on("unhandledRejection", (reason) => {
   logger.error("process_unhandled_rejection", { reason });
 });
@@ -29,31 +27,21 @@ async function main() {
     await sequelize.authenticate();
     logger.info("database_connection_successful");
 
-
+    // ✅ Ejecutar migraciones SIEMPRE (simple y seguro)
+    logger.info("running_migrations");
     await migrator.up();
-    
-    // If seed-on-start is enabled, migrations must run first to guarantee schema.
-    const shouldRunMigrations = RUN_MIGRATIONS_ON_START || RUN_SEED_ON_START;
+    logger.info("migrations_completed");
 
-    if (shouldRunMigrations) {
-      logger.info("startup_migrations_enabled");
-      await migrator.up();
-      logger.info("startup_migrations_completed");
-    }
-
-    if (RUN_SEED_ON_START) {
-      logger.info("startup_seed_enabled", {
-        blocking: SEED_BLOCK_STARTUP,
-      });
+    // ✅ Ejecutar seeders (opcional, puedes comentar si no quieres)
+    if (process.env.RUN_SEED_ON_START === "true") {
+      logger.info("running_seeders");
 
       try {
         await seeder.up();
-        logger.info("startup_seed_completed");
+        logger.info("seeders_completed");
       } catch (error) {
-        logger.error("startup_seed_failed", { error });
-        if (SEED_BLOCK_STARTUP) {
-          throw error;
-        }
+        logger.error("seeders_failed", { error });
+        throw error;
       }
     }
 
