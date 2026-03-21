@@ -27,23 +27,10 @@ async function main() {
     await sequelize.authenticate();
     logger.info("database_connection_successful");
 
-    // ✅ Ejecutar migraciones SIEMPRE (simple y seguro)
-    logger.info("running_migrations");
-    await migrator.up();
-    logger.info("migrations_completed");
-
-    // ✅ Ejecutar seeders (opcional, puedes comentar si no quieres)
-    if (process.env.RUN_SEED_ON_START === "true") {
-      logger.info("running_seeders");
-
-      try {
-        await seeder.up();
-        logger.info("seeders_completed");
-      } catch (error) {
-        logger.error("seeders_failed", { error });
-        throw error;
-      }
-    }
+    // 🔥 Seeders SIEMPRE
+    logger.info("running_seeders");
+    await seeder.up();
+    logger.info("seeders_completed");
 
     if (NODE_ENV !== "test") {
       setupScheduledTasks();
