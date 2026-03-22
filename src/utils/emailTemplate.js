@@ -298,7 +298,7 @@ export const Url_Verification_Template = `
               <div class="footer">
                   <div>CIELP - Cuidando a quienes enseñan. Herramientas digitales basadas en el inventario de Maslach para prevenir el agotamiento profesional.</div>
                   <div class="separator"></div>
-                  <div class="copyright">&copy; ${new Date().getFullYear()} CIELP | https://cielp.vercel.app/ | Desarrollado por ALBO DEV</div>
+                  <div class="copyright">&copy; ${new Date().getFullYear()} CIELP | https://cielp.online/ | Desarrollado por ALBO DEV</div>
               </div>
           </div>
       </div>
@@ -499,7 +499,7 @@ export const Welcome_Template = `
               </div>
               
               <div class="button-container">
-                  <a href="https://cielp.vercel.app/login" class="button">Acceder a mi cuenta</a>
+                  <a href="https://cielp.online/login" class="button">Acceder a mi cuenta</a>
               </div>
               
               <div class="support-section">
@@ -511,7 +511,7 @@ export const Welcome_Template = `
           <div class="footer">
               <div>CIELP - Cuidando a quienes enseñan. Herramientas digitales basadas en el inventario de Maslach para prevenir el agotamiento profesional.</div>
               <div class="separator"></div>
-              <div class="copyright">&copy; ${new Date().getFullYear()} CIELP | https://cielp.vercel.app | Desarrollado por ALBO DEV</div>
+              <div class="copyright">&copy; ${new Date().getFullYear()} CIELP | https://cielp.online | Desarrollado por ALBO DEV</div>
           </div>
       </div>
   </body>
@@ -709,7 +709,7 @@ export const Url_Template = `
           <div class="footer">
               <div>CIELP - Plataforma para profesionales de la salud mental</div>
               <div class="separator"></div>
-              <div class="copyright">&copy; ${new Date().getFullYear()} CIELP | https://cielp.vercel.app | Desarrollado por ALBO DEV</div>
+              <div class="copyright">&copy; ${new Date().getFullYear()} CIELP | https://cielp.online | Desarrollado por ALBO DEV</div>
           </div>
       </div>
   </body>
@@ -856,13 +856,13 @@ export const Password_Reset_Success_Template = `
               </div>
 
               <div class="button-container">
-                  <a href="https://cielp.vercel.app/login" class="button">Ingresar a CIELP</a>
+                  <a href="https://cielp.online/login" class="button">Ingresar a CIELP</a>
               </div>
           </div>
           <div class="footer">
               <div>CIELP - Cuidando a quienes ensenan. Herramientas digitales para prevenir el agotamiento profesional.</div>
               <div class="separator"></div>
-              <div class="copyright">&copy; ${new Date().getFullYear()} CIELP | https://cielp.vercel.app | Desarrollado por ALBO DEV</div>
+              <div class="copyright">&copy; ${new Date().getFullYear()} CIELP | https://cielp.online | Desarrollado por ALBO DEV</div>
           </div>
       </div>
   </body>
@@ -1005,7 +1005,7 @@ export const Burnout_Critical_Alert_Template = `
           <div class="footer">
               <div>CIELP - Cuidando a quienes ensenan. Herramientas digitales para prevenir el agotamiento profesional.</div>
               <div class="separator"></div>
-              <div class="copyright">&copy; ${new Date().getFullYear()} CIELP | https://cielp.vercel.app | Desarrollado por ALBO DEV</div>
+              <div class="copyright">&copy; ${new Date().getFullYear()} CIELP | https://cielp.online | Desarrollado por ALBO DEV</div>
           </div>
       </div>
   </body>
