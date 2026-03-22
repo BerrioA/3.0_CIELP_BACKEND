@@ -441,22 +441,18 @@ export const processResendVerification = async (email) => {
   ).toString("base64");
   const url = `${FRONTEND_URL}/verify-account/${encodeURIComponent(payload)}`;
 
-  // Enviamos en background para no bloquear la respuesta HTTP del registro.
-  void sendVerificationEmail(email, url)
-    .then((result) => {
-      if (!result?.success) {
-        logger.error("verification_email_send_failed", {
-          email,
-          error: result?.error,
-        });
-      }
-    })
-    .catch((error) => {
-      logger.error("verification_email_send_unexpected_error", {
-        email,
-        error,
-      });
+  const result = await sendVerificationEmail(email, url);
+
+  if (!result?.success) {
+    logger.error("verification_email_send_failed", {
+      email,
+      error: result?.error,
     });
+
+    throw new Error(
+      "No fue posible enviar el correo de verificacion. Intenta nuevamente en unos minutos.",
+    );
+  }
 };
 
 // Servicio para confirmar la verificación de cuenta usando el código enviado por email

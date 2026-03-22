@@ -19,7 +19,13 @@ export const registerTeacher = async (req, res) => {
         "Usuario registrado exitosamente. Por favor, verifica tu correo electrónico para activar tu cuenta.",
     });
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    const status =
+      error.message === "Este correo electronico ya se encuentra registrado." ||
+      error.message === "El rol asignado no existe."
+        ? 400
+        : 500;
+
+    res.status(status).json({ error: error.message });
   }
 };
 

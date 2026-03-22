@@ -1,4 +1,5 @@
 import { transporter } from "../utils/transportEmail.js";
+import { EMAIL_USER } from "../config/env.js";
 import {
   Burnout_Critical_Alert_Template,
   Password_Reset_Success_Template,
@@ -7,7 +8,9 @@ import {
   Welcome_Template,
 } from "../utils/emailTemplate.js";
 
-const FROM_EMAIL = '"CIELP" <cielpcontacto@gmail.com>';
+const FROM_EMAIL = EMAIL_USER
+  ? `"CIELP" <${EMAIL_USER}>`
+  : '"CIELP" <no-reply@cielp.local>';
 
 // Función genérica interna para evitar repetir código
 const sendEmail = async (options) => {

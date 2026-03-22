@@ -98,3 +98,11 @@ if (JWT_SECRET.length < 32 || JWT_REFRESH.length < 32) {
     "JWT_SECRET y JWT_REFRESH deben tener una longitud minima de 32 caracteres.",
   );
 }
+
+if (NODE_ENV === "production") {
+  if (!EMAIL_HOST || !EMAIL_USER || !EMAIL_PASS) {
+    throw new Error(
+      "En produccion, EMAIL_HOST, EMAIL_USER y EMAIL_PASS son requeridos para enviar correos.",
+    );
+  }
+}
