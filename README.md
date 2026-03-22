@@ -47,6 +47,9 @@ Variables clave:
 - `JWT_SECRET`
 - `JWT_REFRESH`
 - `FRONTEND_URL`
+- `EMAIL_PROVIDER` (`smtp` o `resend`)
+- `EMAIL_FROM`
+- `RESEND_API_KEY` (si `EMAIL_PROVIDER=resend`)
 - `RATE_LIMIT_MAX`, `AUTH_RATE_LIMIT_MAX`
 
 ## Scripts

@@ -1,5 +1,10 @@
 import { transporter } from "../utils/transportEmail.js";
-import { EMAIL_USER } from "../config/env.js";
+import {
+  EMAIL_FROM,
+  EMAIL_PROVIDER,
+  EMAIL_USER,
+  RESEND_API_KEY,
+} from "../config/env.js";
 import {
   Burnout_Critical_Alert_Template,
   Password_Reset_Success_Template,
@@ -8,17 +13,45 @@ import {
   Welcome_Template,
 } from "../utils/emailTemplate.js";
 
-const FROM_EMAIL = EMAIL_USER
-  ? `"CIELP" <${EMAIL_USER}>`
-  : '"CIELP" <no-reply@cielp.local>';
+const FROM_EMAIL =
+  EMAIL_FROM || EMAIL_USER
+    ? `"CIELP" <${EMAIL_FROM || EMAIL_USER}>`
+    : '"CIELP" <no-reply@cielp.local>';
+
+const sendWithResend = async (options) => {
+  const response = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${RESEND_API_KEY}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      from: FROM_EMAIL,
+      to: Array.isArray(options.to) ? options.to : [options.to],
+      subject: options.subject,
+      html: options.html,
+      text: options.text,
+    }),
+  });
+
+  if (!response.ok) {
+    const errorBody = await response.text();
+    throw new Error(`Resend API error (${response.status}): ${errorBody}`);
+  }
+};
 
 // Función genérica interna para evitar repetir código
 const sendEmail = async (options) => {
   try {
-    await transporter.sendMail({
-      from: FROM_EMAIL,
-      ...options,
-    });
+    if (EMAIL_PROVIDER === "resend") {
+      await sendWithResend(options);
+    } else {
+      await transporter.sendMail({
+        from: FROM_EMAIL,
+        ...options,
+      });
+    }
+
     return { success: true };
   } catch (error) {
     console.error(`[Email Service Error]: ${error}`);

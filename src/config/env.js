@@ -81,6 +81,12 @@ export const EMAIL_HOST = getOptionalString("EMAIL_HOST");
 export const EMAIL_PORT = getOptionalNumber("EMAIL_PORT", 587);
 export const EMAIL_USER = getOptionalString("EMAIL_USER");
 export const EMAIL_PASS = getOptionalString("EMAIL_PASS");
+export const EMAIL_PROVIDER = getOptionalString(
+  "EMAIL_PROVIDER",
+  "smtp",
+).toLowerCase();
+export const EMAIL_FROM = getOptionalString("EMAIL_FROM");
+export const RESEND_API_KEY = getOptionalString("RESEND_API_KEY");
 export const FRONTEND_URL = getRequiredString("FRONTEND_URL");
 
 const isNodeEnvAllowed = ["development", "test", "production"].includes(
@@ -100,9 +106,24 @@ if (JWT_SECRET.length < 32 || JWT_REFRESH.length < 32) {
 }
 
 if (NODE_ENV === "production") {
-  if (!EMAIL_HOST || !EMAIL_USER || !EMAIL_PASS) {
+  if (!["smtp", "resend"].includes(EMAIL_PROVIDER)) {
+    throw new Error(
+      "EMAIL_PROVIDER invalido. Valores permitidos: smtp, resend.",
+    );
+  }
+
+  if (
+    EMAIL_PROVIDER === "smtp" &&
+    (!EMAIL_HOST || !EMAIL_USER || !EMAIL_PASS)
+  ) {
     throw new Error(
       "En produccion, EMAIL_HOST, EMAIL_USER y EMAIL_PASS son requeridos para enviar correos.",
+    );
+  }
+
+  if (EMAIL_PROVIDER === "resend" && !RESEND_API_KEY) {
+    throw new Error(
+      "En produccion, RESEND_API_KEY es requerido cuando EMAIL_PROVIDER=resend.",
     );
   }
 }
