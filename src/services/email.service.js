@@ -1,10 +1,4 @@
-import { transporter } from "../utils/transportEmail.js";
-import {
-  EMAIL_FROM,
-  EMAIL_PROVIDER,
-  EMAIL_USER,
-  RESEND_API_KEY,
-} from "../config/env.js";
+import { EMAIL_FROM, RESEND_API_KEY } from "../config/env.js";
 import {
   Burnout_Critical_Alert_Template,
   Password_Reset_Success_Template,
@@ -13,10 +7,9 @@ import {
   Welcome_Template,
 } from "../utils/emailTemplate.js";
 
-const FROM_EMAIL =
-  EMAIL_FROM || EMAIL_USER
-    ? `"CIELP" <${EMAIL_FROM || EMAIL_USER}>`
-    : '"CIELP" <no-reply@cielp.local>';
+const FROM_EMAIL = EMAIL_FROM
+  ? `"CIELP" <${EMAIL_FROM}>`
+  : '"CIELP" <no-reply@cielp.local>';
 
 const sendWithResend = async (options) => {
   const response = await fetch("https://api.resend.com/emails", {
@@ -43,14 +36,7 @@ const sendWithResend = async (options) => {
 // Función genérica interna para evitar repetir código
 const sendEmail = async (options) => {
   try {
-    if (EMAIL_PROVIDER === "resend") {
-      await sendWithResend(options);
-    } else {
-      await transporter.sendMail({
-        from: FROM_EMAIL,
-        ...options,
-      });
-    }
+    await sendWithResend(options);
 
     return { success: true };
   } catch (error) {

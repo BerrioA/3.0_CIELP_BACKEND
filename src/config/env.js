@@ -77,14 +77,11 @@ export const SUPERADMIN_LASTNAME = getOptionalString("SUPERADMIN_LASTNAME");
 export const SUPERADMIN_EMAIL = getOptionalString("SUPERADMIN_EMAIL");
 export const SUPERADMIN_PASSWORD = getOptionalString("SUPERADMIN_PASSWORD");
 export const SUPERADMIN_PHONE = getOptionalString("SUPERADMIN_PHONE");
-export const EMAIL_HOST = getOptionalString("EMAIL_HOST");
-export const EMAIL_PORT = getOptionalNumber("EMAIL_PORT", 587);
-export const EMAIL_USER = getOptionalString("EMAIL_USER");
-export const EMAIL_PASS = getOptionalString("EMAIL_PASS");
 export const RESEND_API_KEY = getOptionalString("RESEND_API_KEY");
-const rawEmailProvider = getOptionalString("EMAIL_PROVIDER").toLowerCase();
-export const EMAIL_PROVIDER =
-  rawEmailProvider || (RESEND_API_KEY ? "resend" : "smtp");
+export const EMAIL_PROVIDER = getOptionalString(
+  "EMAIL_PROVIDER",
+  "resend",
+).toLowerCase();
 export const EMAIL_FROM = getOptionalString("EMAIL_FROM");
 export const FRONTEND_URL = getRequiredString("FRONTEND_URL");
 
@@ -105,28 +102,17 @@ if (JWT_SECRET.length < 32 || JWT_REFRESH.length < 32) {
 }
 
 if (NODE_ENV === "production") {
-  if (!["smtp", "resend"].includes(EMAIL_PROVIDER)) {
-    throw new Error(
-      "EMAIL_PROVIDER invalido. Valores permitidos: smtp, resend.",
-    );
+  if (EMAIL_PROVIDER !== "resend") {
+    throw new Error("EMAIL_PROVIDER invalido. Este backend usa solo resend.");
   }
 
-  if (
-    EMAIL_PROVIDER === "smtp" &&
-    (!EMAIL_HOST || !EMAIL_USER || !EMAIL_PASS)
-  ) {
-    throw new Error(
-      "En produccion, EMAIL_HOST, EMAIL_USER y EMAIL_PASS son requeridos para enviar correos.",
-    );
-  }
-
-  if (EMAIL_PROVIDER === "resend" && !RESEND_API_KEY) {
+  if (!RESEND_API_KEY) {
     throw new Error(
       "En produccion, RESEND_API_KEY es requerido cuando EMAIL_PROVIDER=resend.",
     );
   }
 
-  if (EMAIL_PROVIDER === "resend" && !EMAIL_FROM) {
+  if (!EMAIL_FROM) {
     throw new Error(
       "En produccion, EMAIL_FROM es requerido cuando EMAIL_PROVIDER=resend.",
     );
