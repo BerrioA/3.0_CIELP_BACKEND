@@ -10,6 +10,7 @@ export const transporter = nodemailer.createTransport({
   host: EMAIL_HOST || "smtp.gmail.com",
   port: EMAIL_PORT,
   secure: Number(EMAIL_PORT) === 465,
+  family: 4,
   auth: {
     user: EMAIL_USER,
     pass: EMAIL_PASS,

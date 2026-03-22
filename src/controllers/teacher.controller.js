@@ -7,9 +7,9 @@ import {
 
 // Controlador para registrar maestros
 export const registerTeacher = async (req, res) => {
-  try {
-    const { userData } = req.body;
+  const { userData } = req.body;
 
+  try {
     const newUser = await registerUser(userData);
 
     await processResendVerification(newUser.email);
@@ -24,6 +24,21 @@ export const registerTeacher = async (req, res) => {
       error.message === "El rol asignado no existe."
         ? 400
         : 500;
+
+    if (
+      error.message === "Este correo electronico ya se encuentra registrado."
+    ) {
+      try {
+        await processResendVerification(userData?.email);
+
+        return res.status(200).json({
+          message:
+            "Este correo ya estaba registrado. Te reenviamos un nuevo correo de verificacion.",
+        });
+      } catch (resendError) {
+        return res.status(500).json({ error: resendError.message });
+      }
+    }
 
     res.status(status).json({ error: error.message });
   }

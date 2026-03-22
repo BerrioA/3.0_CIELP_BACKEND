@@ -411,7 +411,8 @@ export const resetUserPassword = async (payloadBase64, newPassword) => {
 };
 
 export const processResendVerification = async (email) => {
-  const user = await User.findOne({ where: { email } });
+  const normalizedEmail = normalizeEmail(email);
+  const user = await User.findOne({ where: { email: normalizedEmail } });
   if (!user) throw new Error("Usuario no encontrado");
 
   // 1. Generar los datos necesarios
@@ -437,15 +438,15 @@ export const processResendVerification = async (email) => {
 
   // 3. Generar URL y enviar email
   const payload = Buffer.from(
-    JSON.stringify({ email, code: rawCode }),
+    JSON.stringify({ email: normalizedEmail, code: rawCode }),
   ).toString("base64");
   const url = `${FRONTEND_URL}/verify-account/${encodeURIComponent(payload)}`;
 
-  const result = await sendVerificationEmail(email, url);
+  const result = await sendVerificationEmail(normalizedEmail, url);
 
   if (!result?.success) {
     logger.error("verification_email_send_failed", {
-      email,
+      email: normalizedEmail,
       error: result?.error,
     });
 

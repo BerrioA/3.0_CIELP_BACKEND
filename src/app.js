@@ -25,6 +25,7 @@ import {
 const app = express();
 
 // Middlewares
+app.set("trust proxy", 1);
 app.use(helmet());
 app.use(attachRequestContext);
 app.use(requestObservability);
