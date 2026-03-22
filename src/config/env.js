@@ -125,4 +125,10 @@ if (NODE_ENV === "production") {
       "En produccion, RESEND_API_KEY es requerido cuando EMAIL_PROVIDER=resend.",
     );
   }
+
+  if (EMAIL_PROVIDER === "resend" && !EMAIL_FROM) {
+    throw new Error(
+      "En produccion, EMAIL_FROM es requerido cuando EMAIL_PROVIDER=resend.",
+    );
+  }
 }
