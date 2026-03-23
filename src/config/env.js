@@ -40,6 +40,26 @@ const getOptionalNumber = (name, fallback) => {
   return parsed;
 };
 
+const getOptionalBoolean = (name, fallback = false) => {
+  const raw = process.env[name];
+
+  if (raw === undefined || raw === null || String(raw).trim() === "") {
+    return fallback;
+  }
+
+  const normalized = String(raw).trim().toLowerCase();
+
+  if (["true", "1", "yes", "y", "on"].includes(normalized)) {
+    return true;
+  }
+
+  if (["false", "0", "no", "n", "off"].includes(normalized)) {
+    return false;
+  }
+
+  throw new Error(`La variable ${name} debe ser booleana.`);
+};
+
 export const PORT = getRequiredNumber("PORT");
 export const POSTGRES_USER = getRequiredString("POSTGRES_USER");
 export const POSTGRES_PASSWORD = getRequiredString("POSTGRES_PASSWORD");
@@ -84,6 +104,17 @@ export const EMAIL_PROVIDER = getOptionalString(
 ).toLowerCase();
 export const EMAIL_FROM = getOptionalString("EMAIL_FROM");
 export const FRONTEND_URL = getRequiredString("FRONTEND_URL");
+export const KEEPALIVE_TOKEN = getOptionalString("KEEPALIVE_TOKEN");
+export const KEEPALIVE_ENABLE_SUPABASE_PING = getOptionalBoolean(
+  "KEEPALIVE_ENABLE_SUPABASE_PING",
+  true,
+);
+export const SUPABASE_PROJECT_URL = getOptionalString("SUPABASE_PROJECT_URL");
+export const SUPABASE_ANON_KEY = getOptionalString("SUPABASE_ANON_KEY");
+export const SUPABASE_PING_PATH = getOptionalString(
+  "SUPABASE_PING_PATH",
+  "/rest/v1/mbi_questions?select=id&limit=1",
+);
 
 const isNodeEnvAllowed = ["development", "test", "production"].includes(
   NODE_ENV,
