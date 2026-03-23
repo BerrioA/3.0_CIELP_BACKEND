@@ -70,47 +70,8 @@ Scripts disponibles:
 
 ## Endpoints operativos
 
-- `GET /health`
-- `GET /keepalive/ping`
 - `GET /api/cielp/v1/health`
 - `GET /api/cielp/v1/metrics`
-
-## Keep-alive para Render y Supabase (Cron-job.org)
-
-Este backend ya incluye un endpoint de keep-alive que despierta Render y, de forma opcional, hace ping a Supabase en la misma llamada.
-
-### 1) Variables de entorno en Render
-
-- `KEEPALIVE_TOKEN`: token largo y aleatorio (recomendado para proteger el endpoint).
-- `KEEPALIVE_ENABLE_SUPABASE_PING=true`
-- `SUPABASE_PROJECT_URL=https://<project-ref>.supabase.co`
-- `SUPABASE_ANON_KEY=<anon-key>`
-- `SUPABASE_PING_PATH=/rest/v1/mbi_questions?select=id&limit=1`
-
-Notas:
-
-- No usar `SERVICE_ROLE_KEY` en keep-alive.
-- Si la tabla usada en `SUPABASE_PING_PATH` tiene RLS estricto, usa una ruta publica de lectura minima para el ping.
-
-### 2) Cron-job.org
-
-Crear un job HTTP con estos valores:
-
-- URL: `https://<tu-servicio-render>.onrender.com/keepalive/ping`
-- Method: `GET`
-- Schedule: `*/10 * * * *` (cada 10 minutos)
-- Timeout: 15s
-- Header: `x-keepalive-token: <KEEPALIVE_TOKEN>`
-
-### 3) Verificacion
-
-- Comprobar `200 OK` en cron-job.org.
-- Respuesta esperada del endpoint:
-  - `render.awake=true`
-  - `supabase.enabled=true`
-  - `supabase.ok=true`
-
-Si `supabase.ok=false`, el endpoint responde `502` para que puedas detectar fallos en monitoreo.
 
 ## Flujo recomendado para primer despliegue
 
@@ -118,7 +79,7 @@ Si `supabase.ok=false`, el endpoint responde `502` para que puedas detectar fall
 2. Ejecutar migraciones.
 3. Ejecutar seeders iniciales (solo si aplica a entorno nuevo).
 4. Levantar API con `npm start`.
-5. Validar `GET /health`, login y endpoint `/keepalive/ping`.
+5. Validar healthcheck y login.
 
 ## Seguridad y buenas practicas
 

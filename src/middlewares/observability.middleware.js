@@ -5,13 +5,6 @@ import {
   recordRequestMetric,
 } from "../observability/metrics.js";
 import { logger } from "../observability/logger.js";
-import {
-  KEEPALIVE_ENABLE_SUPABASE_PING,
-  KEEPALIVE_TOKEN,
-  SUPABASE_ANON_KEY,
-  SUPABASE_PING_PATH,
-  SUPABASE_PROJECT_URL,
-} from "../config/env.js";
 
 const NS_PER_MS = 1_000_000;
 
@@ -61,95 +54,6 @@ export const healthCheckHandler = (_req, res) => {
       ),
     },
   });
-};
-
-const buildSupabasePingUrl = () => {
-  const baseUrl = SUPABASE_PROJECT_URL.replace(/\/+$/, "");
-  const path = SUPABASE_PING_PATH.startsWith("/")
-    ? SUPABASE_PING_PATH
-    : `/${SUPABASE_PING_PATH}`;
-  return `${baseUrl}${path}`;
-};
-
-const isSupabasePingConfigured = () => {
-  return (
-    KEEPALIVE_ENABLE_SUPABASE_PING &&
-    Boolean(SUPABASE_PROJECT_URL) &&
-    Boolean(SUPABASE_ANON_KEY)
-  );
-};
-
-export const keepAlivePingHandler = async (req, res) => {
-  if (KEEPALIVE_TOKEN) {
-    const incomingToken = req.header("x-keepalive-token") || "";
-
-    if (incomingToken !== KEEPALIVE_TOKEN) {
-      return res.status(401).json({
-        success: false,
-        message: "Token de keep-alive invalido.",
-      });
-    }
-  }
-
-  const responsePayload = {
-    success: true,
-    render: {
-      awake: true,
-      timestamp: new Date().toISOString(),
-    },
-    supabase: {
-      enabled: isSupabasePingConfigured(),
-      ok: null,
-      status_code: null,
-      latency_ms: null,
-      error: null,
-    },
-  };
-
-  if (!responsePayload.supabase.enabled) {
-    return res.status(200).json(responsePayload);
-  }
-
-  const start = Date.now();
-
-  try {
-    const supabaseUrl = buildSupabasePingUrl();
-    const supabaseResponse = await fetch(supabaseUrl, {
-      method: "GET",
-      headers: {
-        apikey: SUPABASE_ANON_KEY,
-        Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
-      },
-      signal: AbortSignal.timeout(8000),
-    });
-
-    responsePayload.supabase.status_code = supabaseResponse.status;
-    responsePayload.supabase.latency_ms = Date.now() - start;
-    responsePayload.supabase.ok = supabaseResponse.ok;
-
-    if (!supabaseResponse.ok) {
-      const rawBody = await supabaseResponse.text();
-      responsePayload.supabase.error = rawBody.slice(0, 180);
-
-      logger.warn("keepalive_supabase_ping_failed", {
-        status_code: supabaseResponse.status,
-      });
-
-      return res.status(502).json(responsePayload);
-    }
-
-    return res.status(200).json(responsePayload);
-  } catch (error) {
-    responsePayload.supabase.ok = false;
-    responsePayload.supabase.latency_ms = Date.now() - start;
-    responsePayload.supabase.error = error?.message || "Error de red";
-
-    logger.warn("keepalive_supabase_ping_error", {
-      error_message: responsePayload.supabase.error,
-    });
-
-    return res.status(502).json(responsePayload);
-  }
 };
 
 export const metricsHandler = (_req, res) => {

@@ -13,7 +13,6 @@ import {
   attachRequestContext,
   globalErrorHandler,
   healthCheckHandler,
-  keepAlivePingHandler,
   metricsHandler,
   notFoundHandler,
   requestObservability,
@@ -30,11 +29,6 @@ app.set("trust proxy", 1);
 app.use(helmet());
 app.use(attachRequestContext);
 app.use(requestObservability);
-
-// Endpoints publicos para uptime/keep-alive
-app.get("/health", healthCheckHandler);
-app.get("/keepalive/ping", keepAlivePingHandler);
-
 app.use("/api/cielp/v1", apiRateLimiter);
 app.use(express.json());
 app.use(cookieParser());
