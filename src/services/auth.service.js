@@ -106,6 +106,7 @@ const createRefreshSession = async ({ uid, role, req, res }) => {
     uid,
     role,
     sessionId,
+    req,
     res,
   );
 
