@@ -32,6 +32,7 @@ async function main() {
   try {
     await sequelize.authenticate();
     logger.info("database_connection_successful");
+    logger.info("running_migrations");
 
     // 🔥 Seeders SIEMPRE
     logger.info("running_seeders");
