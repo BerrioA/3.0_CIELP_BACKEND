@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-   "scripts": {
+  "scripts": {
     "dev": "node --watch --env-file=.env ./src/index.js",
     "start": "npm run migrate && node src/index.js",
     "migrate": "node ./src/utils/runMigrations.js",
@@ -34,7 +34,12 @@
     "sequelize": "^6.37.8",
     "umzug": "^3.8.2",
     "uuid": "^13.0.0",
+    "websocket": "^1.0.35",
     "xss": "^1.0.15",
     "zod": "^4.3.6"
+  },
+  "overrides": {
+    "@rushstack/terminal": "0.22.3",
+    "@rushstack/node-core-library": "5.20.3"
   }
 }
